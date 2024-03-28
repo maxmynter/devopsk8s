@@ -1,0 +1,5 @@
+k3d cluster create -a 2
+k3d cluster start
+docker build -t c-logs .
+docker tag c-logs maxmynter/c-log-k8s-mooc
+ kubectl create deployment c-logs --image=maxmynter/c-log-k8s-mooc
