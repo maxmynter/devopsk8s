@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output
+  template:
+    metadata:
+      labels:
+        app: log-output
+    spec:
+      containers:
+        - name: log-output
+          image: maxmynter/node-hello-world@sha256:f743f25df3cb00feb56c7ea4439ef5ed3c58a31521cb390f63c3f74e6559c435
+          imagePullPolicy: Always
