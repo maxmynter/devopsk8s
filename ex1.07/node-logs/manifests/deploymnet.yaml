@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-timestamp-dep
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-timestamp
+  template:
+    metadata:
+      labels:
+        app: node-timestamp
+    spec:
+      containers:
+      - name: node-timestamp
+        image: maxmynter/node-timestamp:latest
+        ports:
+        - containerPort: 3000
+

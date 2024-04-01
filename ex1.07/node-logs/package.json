@@ -1,0 +1,15 @@
+{
+  "name": "node-logs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.2",
+    "typescript": "^5.4.3"
+  }
+}
