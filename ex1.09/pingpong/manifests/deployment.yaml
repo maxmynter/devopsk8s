@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingpong-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpong
+  template:
+    metadata:
+      labels:
+        app: pingpong
+    spec:
+      containers:
+        - name: pingpong
+          image: maxmynter/pingpong@sha256:6fe892cb809a771b2971c93ec3ebbbc336e8ab7a8b2528c208a8d48093d6ac0d
+          ports:
+          - containerPort: 3001

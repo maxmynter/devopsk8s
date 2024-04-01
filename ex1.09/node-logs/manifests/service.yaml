@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-timestamp-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: node-timestamp
+  ports:
+    - port: 2345
+      targetPort: 3000
+      protocol: TCP
+
