@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: sharefile
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sharefile
+  template:
+    metadata:
+      labels:
+        app: sharefile
+    spec:
+      volumes:
+        - name: shared-volume
+          emptyDir: {}
+      containers:
+        - name: timestamper
+          image: maxmynter/c-timestamp@sha256:ec19f6eaf3914664f2b3f66d78f4607d31f608da38a5594d79251fd3a1504cde
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+        - name: server
+          image: maxmynter/node-readfile@sha256:504b34a408f1707df56f2d9194a3a80167be4b4601ddf2636722c379e18dd33c
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+
