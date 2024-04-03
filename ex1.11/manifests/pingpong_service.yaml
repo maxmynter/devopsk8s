@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingpong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpong
+  template:
+    metadata:
+      labels:
+        app: pingpong
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: sharefile-claim
+      containers:
+        - name: pingpong
+          image: maxmynter/pingpong@sha256:f1508f2d9d7d9d894c7b57fe62e029d195f8e9bd27e864171e37511c9962c027
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pingpong-svc
+spec:
+  type: ClusterIP
+  selector: 
+    app: pingpong
+  ports:
+    - port: 3456
+      targetPort: 3001
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pingpong-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: pingpong
+  ports:
+    - port: 3456
+      targetPort: 3001
+      protocol: TCP
