@@ -1,0 +1,2 @@
+docker exec k3d-k3s mkdir -p /tmp/kube
+docker exec k3d-k3s chmor 777 /tmp/kube
