@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output
+  template:
+    metadata:
+      labels:
+        app: log-output
+    spec:
+      volumes:
+        - name: persisted-volume
+          persistentVolumeClaim:
+            claimName: persisted-claim
+      containers:
+        - name: backend
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: persisted-volume
+              mountPath: /usr/src/app/cache
+          image: maxmynter/devopsk8sproject@sha256:d09fefc8bcea62a27feb22cd49f6e558d98f25ecc58fba19f7b5d019848d50ef
+        - name: frontend
+          image: maxmynter/devopsk8sbackend:latest
+          ports:
+            - containerPort: 80
