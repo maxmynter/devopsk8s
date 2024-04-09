@@ -3,7 +3,7 @@
 	let imagePath = '';
 
 	onMount(async () => {
-		const response = await fetch('http://backend/image');
+		const response = await fetch('http://localhost:3005/image'); // ATTENTION: REQUEST MUST GO TO PORT FORWARD OF LOADBALANCER OF K3D CLUSYER
 		const data = await response.json();
 		imagePath = data.filepath;
 	});

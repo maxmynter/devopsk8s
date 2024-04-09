@@ -2,9 +2,11 @@ const http = require('http');
 const https = require('https')
 const fsPromises = require('fs').promises;
 const fs = require('fs');
+const path = require('path')
 
 const hostname = '0.0.0.0';
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
+const loadbalancerPortForwardFullAddress = 'http://localhost:3005/'
 
 const updatedTimestampFilename = 'cache/lastUpdated.txt'
 
@@ -65,19 +67,64 @@ function fetchImage(url) {
 	})
 }
 
-const server = http.createServer(async (req, res) => {
-	if (req.method == 'GET' && req.url == '/image') {
-		await ensureImage();
-		try {
-			res.writeHead(200, { 'Content-Type': 'application/json' });
-			res.end({ 'filepath': 'cache/imge.jpg' });
-		} catch {
-			res.writeHead(500, { 'Content-Type': 'text/plain' });
-			res.end('Error getting image');
+function setCORSHeaders(req, res) {
+	const origin = req.headers.origin;
+	res.setHeader('Access-Control-Allow-Origin', '*') // allow any origin
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+	res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+	res.setHeader('Access-Control-Allow-Credentials', 'false');
 
-		}
+	if (req.method === 'OPTIONS') {
+		res.writeHead(204);
+		res.end();
+		return true;
 	}
-	else {
+	return false;
+}
+
+function serveStaticFile(req, res) {
+	let filePath = decodeURI(req.url);
+
+	if (filePath.includes('..')) {
+		// nono bad boy, do not leave project dir
+		res.statusCode(400);
+		res.end('Invalid request');
+		return;
+	}
+	const fullPath = path.join(__dirname, filePath);
+	fs.exists(fullPath, (exists) => {
+		if (!exists) {
+			res.statusCode(400);
+			res.end('File not found');
+			return;
+		}
+
+		fs.readFile(fullPath, (err, data) => {
+			const ext = path.extname(fullPath.toLowerCase());
+			if (ext === '.jpg' || '.jpeg') {
+				res.setHeader('Content-Type', 'image/jpg');
+			} else {
+				res.set('Content-Type', 'application/octet-stream');
+			}
+			res.writeHead(200);
+			res.end();
+		})
+	})
+}
+
+const server = http.createServer(async (req, res) => {
+	if (setCORSHeaders(req, res)) {
+		return;
+	}
+	if (req.method == 'Get' && req.url.startsWith('/cache')) {
+		serveStaticFile(req, res);
+		return;
+	}
+	else if (req.method == 'GET' && req.url == '/image') {
+		await ensureImage();
+		res.writeHead(200, { 'Content-Type': 'application/json' });
+		res.end(JSON.stringify({ 'filepath': loadbalancerPortForwardFullAddress + 'cache/image.jpg' }));
+	} else {
 		res.statusCode = 404;
 		res.setHeader('Content-Type', 'text/error');
 		res.end('Not Found\n');

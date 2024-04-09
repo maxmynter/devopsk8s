@@ -22,8 +22,8 @@ spec:
           volumeMounts:
             - name: persisted-volume
               mountPath: /usr/src/app/cache
-          image: maxmynter/devopsk8sproject@sha256:d09fefc8bcea62a27feb22cd49f6e558d98f25ecc58fba19f7b5d019848d50ef
+          image: maxmynter/devopsk8s-backend@sha256:6ea5a81117f01c1dc874d6a8fc6535ee61a9c6967a06e1784aa6400ba2193c60
         - name: frontend
-          image: maxmynter/devopsk8sbackend:latest
+          image: maxmynter/devopsk8s-frontend@sha256:a333453c014f92cceebd2b7a267cc57cbcd4c48a81a6198a3d8cdc56764a0705
           ports:
             - containerPort: 80
