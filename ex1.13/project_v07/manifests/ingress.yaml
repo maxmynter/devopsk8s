@@ -6,13 +6,6 @@ spec:
   rules:
     - http:
         paths:
-        - path: /cache/
-          pathType: Prefix
-          backend:
-            service:
-              name: backend-service
-              port:
-                number: 1234
         - path: /image
           pathType: Prefix
           backend:

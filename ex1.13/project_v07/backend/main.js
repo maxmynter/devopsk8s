@@ -6,9 +6,9 @@ const path = require('path')
 
 const hostname = '0.0.0.0';
 const port = process.env.PORT || 4000;
-const loadbalancerPortForwardFullAddress = 'http://localhost:3005/'
-
 const updatedTimestampFilename = 'cache/lastUpdated.txt'
+const imageFilePath = 'cache/image.jpg';
+
 
 async function recursiveEnsureDir(dir) {
 	try {
@@ -40,7 +40,7 @@ async function updateImageInCache() {
 	try {
 		const response = await fetchImage('https://picsum.photos/1200');
 		await recursiveEnsureDir('cache');
-		const fileStream = fs.createWriteStream('cache/image.jpg');
+		const fileStream = fs.createWriteStream(imageFilePath);
 		response.pipe(fileStream);
 		await new Promise((resolve, reject) => {
 			fileStream.on('finish', resolve);
@@ -82,48 +82,34 @@ function setCORSHeaders(req, res) {
 	return false;
 }
 
-function serveStaticFile(req, res) {
-	let filePath = decodeURI(req.url);
+function serveStaticFile(fullPath, res) {
 
-	if (filePath.includes('..')) {
-		// nono bad boy, do not leave project dir
-		res.statusCode(400);
-		res.end('Invalid request');
-		return;
-	}
-	const fullPath = path.join(__dirname, filePath);
-	fs.exists(fullPath, (exists) => {
-		if (!exists) {
-			res.statusCode(400);
-			res.end('File not found');
+	fs.readFile(fullPath, (err, data) => {
+		const ext = path.extname(fullPath.toLowerCase());
+		if (err) {
+			res.statusCode = 400;
+			res.end(`Could not serve file ${err}`);
 			return;
 		}
-
-		fs.readFile(fullPath, (err, data) => {
-			const ext = path.extname(fullPath.toLowerCase());
-			if (ext === '.jpg' || '.jpeg') {
-				res.setHeader('Content-Type', 'image/jpg');
-			} else {
-				res.set('Content-Type', 'application/octet-stream');
-			}
-			res.writeHead(200);
-			res.end();
-		})
-	})
+		else if (ext === '.jpg' || ext === '.jpeg') {
+			res.setHeader('Content-Type', 'image/jpeg');
+		} else {
+			res.setHeader('Content-Type', 'application/octet-stream');
+		}
+		res.writeHead(200);
+		res.end(data);
+	});
 }
 
 const server = http.createServer(async (req, res) => {
 	if (setCORSHeaders(req, res)) {
 		return;
 	}
-	if (req.method == 'Get' && req.url.startsWith('/cache')) {
-		serveStaticFile(req, res);
-		return;
-	}
-	else if (req.method == 'GET' && req.url == '/image') {
+	if (req.method == 'GET' && req.url.startsWith('/image')) {
 		await ensureImage();
-		res.writeHead(200, { 'Content-Type': 'application/json' });
-		res.end(JSON.stringify({ 'filepath': loadbalancerPortForwardFullAddress + 'cache/image.jpg' }));
+		const fullPath = path.join(__dirname, imageFilePath);
+		serveStaticFile(fullPath, res);
+		return;
 	} else {
 		res.statusCode = 404;
 		res.setHeader('Content-Type', 'text/error');
