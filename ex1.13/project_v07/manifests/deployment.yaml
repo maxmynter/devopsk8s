@@ -24,6 +24,6 @@ spec:
               mountPath: /usr/src/app/cache
           image: maxmynter/devopsk8s-backend@sha256:ede38c90011818cdd25759e9a26651ab838fc580e377a6b0db5f6783903c0904
         - name: frontend
-          image: maxmynter/devopsk8s-frontend@sha256:7eab560b19610328323132da0980ea055e3b35387d5b8e67d69a6e405c57a2e5
+          image: maxmynter/devopsk8s-frontend@sha256:e0862043fad0fe5a54dd2ab3523d23bcdf93ccb79886df8b8988f9de718b973c
           ports:
             - containerPort: 80
