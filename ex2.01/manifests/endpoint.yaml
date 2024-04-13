@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: hash-pingpong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hash-pingpong
+  template:
+    metadata:
+      labels:
+        app: hash-pingpong
+    spec:
+      containers:
+        - name: server
+          image: maxmynter/devopsk8s-node-endpoint@sha256:5c3d826b3e22ff042ad82841057779cd9823071d211cd5ab7ac23052f464aa71
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: hash-pingpong
+  ports:
+    - port: 2345
+      protocol: TCP
+      targetPort: 3000
