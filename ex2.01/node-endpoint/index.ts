@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 
 const PORT: number = process.env.PORT ? +process.env.PORT : 3000;
 const pingpongPort = 3001;
-const pingpongEndpoint = `http://localhost:${pingpongPort}`;
+const pingpongEndpoint = `http://pingpong-svc:${pingpongPort}/pingpong`;
 
 
 const getPongCount = () => new Promise((resolve, reject) => {

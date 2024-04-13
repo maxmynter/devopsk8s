@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: maxmynter/devopsk8s-node-endpoint@sha256:5c3d826b3e22ff042ad82841057779cd9823071d211cd5ab7ac23052f464aa71
+          image: maxmynter/devopsk8s-node-endpoint@sha256:310aba28e8aa9c06ec4dfc4f035db217e585aa675b7aaf3b72743278f2088558
 ---
 apiVersion: v1
 kind: Service
@@ -25,6 +25,6 @@ spec:
   selector:
     app: hash-pingpong
   ports:
-    - port: 2345
+    - port: 3000
       protocol: TCP
       targetPort: 3000
