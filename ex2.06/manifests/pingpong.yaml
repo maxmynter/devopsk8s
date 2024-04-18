@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: pingpong
+  name: pingpong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpong
+  template:
+    metadata:
+      labels:
+        app: pingpong
+    spec:
+      containers:
+        - name: pingpong
+          image: maxmynter/devopsk8s-pingpong@sha256:43b881ec41cff32cf8150d9240523cfeaa92022359a53574fee4af04819c4e6e
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: pingpong
+  name: pingpong-svc
+spec:
+  type: ClusterIP
+  selector: 
+    app: pingpong
+  ports:
+    - port: 3001
+      targetPort: 3001
+      protocol: TCP
