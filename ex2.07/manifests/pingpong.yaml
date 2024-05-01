@@ -15,10 +15,10 @@ spec:
     spec:
       containers:
         - name: pingpong
-          image: maxmynter/devopsk8s-pingpong@sha256:43b881ec41cff32cf8150d9240523cfeaa92022359a53574fee4af04819c4e6e
+          image: maxmynter/devopsk8s-pingpong@sha256:55a467fb6205db7d9300e7628a4ce46490d1df46ed3bb74be861dad64628ab0a
           env:
-            - name: DATABASE_URL
-              value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)"
+            - name: POSTGRES_HOST
+              value: "postgres-svc"
             - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:

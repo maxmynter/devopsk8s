@@ -8,43 +8,43 @@ spec:
   selector:
     matchLabels:
       app: postgresapp
-    template:
-      metadata:
-        labels:
-          app: postgresapp
+  template:
+    metadata:
+      labels:
+        app: postgresapp
+    spec:
+      containers:
+        - name: postgres
+          image: maxmynter/devopsk8s-postgres@sha256:772c402068b75321e09841a6227485eb3ef288c88a01ccb4023e0a0c00a3e986
+          ports:
+            - name: web
+              containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
       spec:
-        containers:
-          - name: postgres
-            image: postgres:16
-            ports:
-              - name: web
-                containerPort: 5432
-            env:
-              - name: POSTGRES_DB
-                valueFrom:
-                  secretKeyRef:
-                    name: postgres-secrets
-                    key: POSTGRES_DB
-              - name: POSTGRES_USER
-                valueFrom:
-                  secretKeyRef:
-                    name: postgres-secrets
-                    key: POSTGRES_USER
-              - name: POSTGRES_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: postgres-secrets
-                    key: POSTGRES_PASSWORD
-            volumeMounts:
-              - name: postgres-storage
-                mountPath: /var/lib/postgresql/data
-    volumeClaimTemplates:
-      - metadata:
-          name: postgres-storage
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          storageClassName: local-path
-          resources:
-            requests:
-              storage: 100Mi
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 100Mi
 
