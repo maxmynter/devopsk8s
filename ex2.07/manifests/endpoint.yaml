@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  namespace: pingpong
+  name: hash-pingpong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hash-pingpong
+  template:
+    metadata:
+      labels:
+        app: hash-pingpong
+    spec:
+      containers:
+        - name: server
+          image: maxmynter/devopsk8s-node-endpoint@sha256:1591bb580f45b7cc6bb1a40975ad85cf9de7fcfb837450226e10197c2cbe5e8b
+          volumeMounts:
+            - name: info
+              mountPath: /etc/config
+              readOnly: true
+          env:
+          - name: MESSAGE
+            valueFrom:
+              configMapKeyRef:
+                name: info
+                key: message
+      volumes:
+      - name: info
+        configMap: 
+          name: info
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: pingpong
+  name: server-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: hash-pingpong
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
