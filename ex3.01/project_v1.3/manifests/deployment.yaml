@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: project
+  name: todo-project-v1-0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-app
+  template:
+    metadata:
+      labels:
+        app: todo-app
+    spec:
+      volumes:
+        - name: persisted-volume
+          persistentVolumeClaim:
+            claimName: persisted-claim
+      containers:
+        - name: todo-app
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: persisted-volume
+              mountPath: /usr/src/app/cache
+          image: maxmynter/devopsk8s-project-frontend@sha256:9b7323ff463d3150ad14f4405ab93926d6a9303c7f556833a9f37c3219c59d9e
+        - name: todo-backend
+          image: maxmynter/devopsk8s-project-backend@sha256:16ecd37f6e579ca945b27a0f49fb7799188e5f1f6c5578d6d9086fa80cf2e35c
+          env:
+            - name: POSTGRES_HOST
+              value: "postgres-svc"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_PASSWORD

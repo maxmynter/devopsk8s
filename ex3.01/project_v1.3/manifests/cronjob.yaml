@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: wiki-todo
+  namespace: project
+spec:
+  schedule: "9 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: wiki-todo
+            image: maxmynter/devopsk8s-cronjob@sha256:74340a458cea929becc255d5271d025ac2165b70cbe2ef4a7c8136eaf147256f
+            env:
+            - name: BACKEND_URL
+              value: "http://todo-backend-svc:2345"
+          restartPolicy: OnFailure
