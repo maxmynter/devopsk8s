@@ -4,6 +4,7 @@ WORKDIR /usr/src/app/
 
 COPY . .
 
+ENV TODOS_BASEURL=http://localhost:3005
 ENV PORT=4000
 
 RUN useradd -m server-exec -s /bin/sh

@@ -23,9 +23,9 @@ spec:
           volumeMounts:
             - name: persisted-volume
               mountPath: /usr/src/app/cache
-          image: maxmynter/devopsk8s-project-frontend@sha256:9b7323ff463d3150ad14f4405ab93926d6a9303c7f556833a9f37c3219c59d9e
+          image: maxmynter/devopsk8s-todo-app@sha256:188b25e2c212bc92841b48f0d3d0c9443dcc14501a6ac86b27a23e8c55453607
         - name: todo-backend
-          image: maxmynter/devopsk8s-project-backend@sha256:16ecd37f6e579ca945b27a0f49fb7799188e5f1f6c5578d6d9086fa80cf2e35c
+          image: maxmynter/devopsk8s-project-backend@sha256:0354c5ce519a9206e96488ad59c24c0400df2e6e36663836a08a3ef993dd8dbe
           env:
             - name: POSTGRES_HOST
               value: "postgres-svc"

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: maxmynter/devopsk8s-project-db@sha256:5d2dff447cf9c3b8a015b70dc679567b47ec5ef2fb7f219c964687a18122600d
+          image: maxmynter/devopsk8s-project-db@sha256:256002bc41e2c8cb2a5e887a1e2c6670768159b21fdfbfbb9850cd2090c02371
           ports:
             - name: web
               containerPort: 5432
@@ -39,7 +39,6 @@ spec:
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
-              subPath: postgres
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage

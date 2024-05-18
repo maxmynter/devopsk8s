@@ -34,8 +34,16 @@
 	<ul class="todos-list" id="todosList"></ul>
 
 	<script>
+		let todosBaseurl;
+		async function fetchConfig() {
+			const response = await fetch('/config');
+			const config = await response.json();
+			todosBaseurl = config.todosBaseurl;
+			console.log(`Got todos baseurl: ${todosBaseurl}`)
+		}
 		async function fetchTodos() {
-			const requestUrl = `/todos`;
+			await fetchConfig();
+			const requestUrl = `${todosBaseurl}/todos`;
 			console.log(`Request to ${requestUrl}`);
 			const response = await fetch(requestUrl);
 			const todos = await response.json();
@@ -51,7 +59,7 @@
 			const input = document.getElementById('newTodo');
 			const todoText = input.value.trim();
 			if (todoText) {
-				const response = await fetch(`/todos`, {
+				const response = await fetch(`${todosBaseurl}/todos`, {
 					method: 'POST',
 					headers: {"Content-Type": 'application/json'},
 					body: JSON.stringify({text: todoText})

@@ -129,7 +129,7 @@ const server = http.createServer(async (req, res) => {
 	else {
 		res.statusCode = 404;
 		res.setHeader('Content-Type', 'text/error');
-		res.end({ error: 'Not Found\n' });
+		res.end('Not Found\n');
 	}
 });
 
