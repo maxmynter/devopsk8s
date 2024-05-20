@@ -15,7 +15,9 @@ spec:
     spec:
       containers:
         - name: server
-          image: maxmynter/devopsk8s-node-endpoint@sha256:1591bb580f45b7cc6bb1a40975ad85cf9de7fcfb837450226e10197c2cbe5e8b
+          image: maxmynter/devopsk8s-node-endpoint@sha256:ee276aeedc59a834d2264dcb360186e472fb45cf12015ad924ceaf86c5be61cf
+          ports:
+           - containerPort: 3000
           volumeMounts:
             - name: info
               mountPath: /etc/config
@@ -38,10 +40,10 @@ metadata:
   namespace: pingpong
   name: server-svc
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: hash-pingpong
   ports:
-    - port: 3000
+    - port: 80
       protocol: TCP
       targetPort: 3000

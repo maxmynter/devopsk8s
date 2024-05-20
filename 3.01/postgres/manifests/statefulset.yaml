@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres-stset
+  namespace: pingpong
 spec:
   serviceName: postgres-svc
   replicas: 1
@@ -15,7 +16,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: maxmynter/devopsk8s-postgres@sha256:772c402068b75321e09841a6227485eb3ef288c88a01ccb4023e0a0c00a3e986
+          image: maxmynter/devopsk8s-postgres@sha256:01ca3bb1ad2dc73f0c1ab91c03433ac252737ec99abd6b3321971d8892590aa3
           ports:
             - name: web
               containerPort: 5432
@@ -38,12 +39,12 @@ spec:
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+              subPath: postgres
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: local-path
         resources:
           requests:
             storage: 100Mi

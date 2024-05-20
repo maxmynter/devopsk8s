@@ -4,11 +4,12 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm ci 
+RUN npm i typescript
 
 COPY . .
 
-RUN npm run build
+RUN ./node_modules/.bin/tsc
 
 RUN rm -rf node_modules
 
