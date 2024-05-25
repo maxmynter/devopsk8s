@@ -1,0 +1,67 @@
+name: Release Project (1.4, ex3.3)
+on:
+  push
+env:
+  EXERCISE_NO: ex3.03
+  PROJECT_REV: project_v1.4
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  DEPLOYMENT: todo-project-v1-4
+  BRANCH: ${{ github.ref_name }}
+jobs:
+  build-publish-deploy:
+    name: Build, Publish, Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Print Secret
+        env:
+          GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+        run: echo "GKE_Projet $GKE_PROJECT"
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Use gcloud CLI'
+        run: gcloud info
+
+      - name: 'Configure Docker'
+        run: gcloud --quiet auth configure-docker
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster-name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name: Build
+        run: |-
+          docker build --tag "gcr.io/$PROJECT_ID/TODO/FRONTEND:$BRANCH-$GITHUB_SHA" '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-app/'
+          docker build --tag "gcr.io/$PROJECT_ID/TODO/BACKEND:$BRANCH-$GITHUB_SHA" '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-backend/'
+          docker build --tag "gcr.io/$PROJECT_ID/TODO/CRONJOB:$BRANCH-$GITHUB_SHA" '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-job/'
+          docker build --tag "gcr.io/$PROJECT_ID/TODO/DB:$BRANCH-$GITHUB_SHA" '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-db/'
+      - name: Publish
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/TODO/FRONTEND:$BRANCH-$GITHUB_SHA"
+          docker push "gcr.io/$PROJECT_ID/TODO/BACKEND:$BRANCH-$GITHUB_SHA"
+          docker push "gcr.io/$PROJECT_ID/TODO/CRONJOB:$BRANCH-$GITHUB_SHA"
+          docker push "gcr.io/$PROJECT_ID/TODO/DB:$BRANCH-$GITHUB_SHA"
+      - name: Deploy
+        run: |-
+          kustomize edit set image TODO/FRONTEND="gcr.io/$PROJECT_ID/TODO/FRONTEND:$BRANCH-$GITHUB_SHA"
+          kustomize edit set image TODO/BACKEND="gcr.io/$PROJECT_ID/TODO/BACKEND:$BRANCH-$GITHUB_SHA"
+          kustomize edit set image TODO/JOB="gcr.io/$PROJECT_ID/TODO/CRONJOB:$BRANCH-$GITHUB_SHA"
+          kustomize edit set image TODO/DB="gcr.io/$PROJECT_ID/TODO/DB:$BRANCH-$GITHUB_SHA"
+          kustomize built "${{ env.PROJECT_ID }}/${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}" | kubectl apply -f -
+          kubectl rollout status deployment ${{ env.DEPLOYMENT }}
+          kubectl get services -o wide
