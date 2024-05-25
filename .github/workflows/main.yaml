@@ -22,30 +22,31 @@ jobs:
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+          credentials_json: "${{ secrets.GKE_SA_KEY }}"
 
-      - name: 'Set up Cloud SDK'
+      - name: "Set up Cloud SDK"
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: 'Use gcloud CLI'
+      - name: "Use gcloud CLI"
         run: gcloud info
 
-      - name: 'Configure Docker'
+      - name: "Configure Docker"
         run: gcloud --quiet auth configure-docker
 
-      - name: 'Get GKE credentials'
-        uses: 'google-github-actions/get-gke-credentials@v2'
+      - name: "Get GKE credentials"
+        uses: "google-github-actions/get-gke-credentials@v2"
         with:
-          cluster_name: '${{ env.GKE_CLUSTER }}'
-          project_id: '${{ env.PROJECT_ID }}'
-          location: '${{ env.GKE_ZONE }}'
+          cluster_name: "${{ env.GKE_CLUSTER }}"
+          project_id: "${{ env.PROJECT_ID }}"
+          location: "${{ env.GKE_ZONE }}"
 
       - name: Build
         run: |-
-          docker build --tag "gcr.io/$PROJECT_ID/todo/frontend:$BRANCH-$GITHUB_SHA" '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-app/'
-          docker build --tag "gcr.io/$PROJECT_ID/todo/backend:$BRANCH-$GITHUB_SHA" '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-backend/'
-          docker build --tag "gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA" '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-job/'
-          docker build --tag "gcr.io/$PROJECT_ID/todo/db:$BRANCH-$GITHUB_SHA" '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-db/'
+          docker build --tag "gcr.io/$PROJECT_ID/todo/frontend:$BRANCH-$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-app/"
+          docker build --tag "gcr.io/$PROJECT_ID/todo/backend:$BRANCH-$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-backend/"
+          docker build --tag "gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-job/"
+          docker build --tag "gcr.io/$PROJECT_ID/todo/db:$BRANCH-$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-db/"
+
       - name: Publish
         run: |-
           docker push "gcr.io/$PROJECT_ID/todo/frontend:$BRANCH-$GITHUB_SHA"
@@ -53,9 +54,18 @@ jobs:
           docker push "gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA"
           docker push "gcr.io/$PROJECT_ID/todo/db:$BRANCH-$GITHUB_SHA"
 
+      - name: Decode Secrets
+        run: |-
+          cd  "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/"
+          curl -LO https://github.com/getsops/sops/releases/download/v3.8.1/sops-v3.8.1.linux.amd64
+          mv sops-v3.8.1.linux.amd64 /usr/local/bin/sops
+          chmod +x /usr/local/bin/sops
+          export SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }}
+          sops --decrypt secret.enc.yaml > manifests/secret.yaml
+
       - name: Deploy
         run: |-
-          cd  '${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}'
+          cd  "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/"
           kustomize edit set image TODO/FRONTEND=gcr.io/$PROJECT_ID/todo/frontend:$BRANCH-$GITHUB_SHA
           kustomize edit set image TODO/BACKEND=gcr.io/$PROJECT_ID/todo/backend:$BRANCH-$GITHUB_SHA
           kustomize edit set image TODO/JOB=gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA
