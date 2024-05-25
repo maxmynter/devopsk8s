@@ -11,6 +11,7 @@ env:
   BRANCH: ${{ github.ref_name }}
 jobs:
   build-publish-deploy:
+    environment: GH-Actions
     name: Build, Publish, Deploy
     runs-on: ubuntu-latest
 
