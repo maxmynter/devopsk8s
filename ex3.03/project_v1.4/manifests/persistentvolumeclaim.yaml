@@ -4,7 +4,6 @@ metadata:
   namespace: project
   name: persisted-claim
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:

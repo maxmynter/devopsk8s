@@ -9,7 +9,7 @@ ENV PORT=4000
 
 RUN useradd -m server-exec -s /bin/sh
 
-RUN mkdir -p cache && chown -R server-exec:server-exec cache
+RUN mkdir -p /usr/src/app/cache && chown -R server-exec:server-exec /usr/src/app/cache
 
 USER server-exec
 

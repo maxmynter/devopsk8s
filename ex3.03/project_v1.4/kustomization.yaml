@@ -1,13 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-    - manifests/cronjob.yaml
-    - manifests/deployment.yaml
-    - manifests/ingress.yaml
-    - manifests/persistentvolumeclaim.yaml
     - manifests/secret.yaml
+    - manifests/persistentvolumeclaim.yaml
     - manifests/service.yaml
+    - manifests/deployment.yaml
     - manifests/statefulset.yaml
+    - manifests/cronjob.yaml
+    - manifests/ingress.yaml
 images:
     - name: TODO/FRONTEND
       newName: maxmynter/devopsk8s-todo-app@sha256:188b25e2c212bc92841b48f0d3d0c9443dcc14501a6ac86b27a23e8c55453607

@@ -7,7 +7,7 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
-  DEPLOYMENT: project_v1.4
+  DEPLOYMENT_NAME: todo-project-v1-4
   BRANCH: ${{ github.ref_name }}
 jobs:
   build-publish-deploy:
@@ -63,6 +63,9 @@ jobs:
           export SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }}
           sops --decrypt secret.enc.yaml > manifests/secret.yaml
 
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
       - name: Deploy
         run: |-
           cd  "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/"
@@ -70,6 +73,5 @@ jobs:
           kustomize edit set image TODO/BACKEND=gcr.io/$PROJECT_ID/todo/backend:$BRANCH-$GITHUB_SHA
           kustomize edit set image TODO/JOB=gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA
           kustomize edit set image TODO/DB=gcr.io/$PROJECT_ID/todo/db:$BRANCH-$GITHUB_SHA
+          cat kustomization.yaml
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment ${{ env.DEPLOYMENT }}
-          kubectl get services -o wide
