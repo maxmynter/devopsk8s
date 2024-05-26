@@ -39,7 +39,7 @@ const server = http.createServer(async (req, res) => {
 		res.end('hello world');
 	}
 
-	if (req.method === 'GET' && req.url === '/todos') {
+	else if (req.method === 'GET' && req.url === '/todos') {
 		try {
 			const todos = await pool.query('SELECT * FROM todos');
 			res.setHeader('Content-Type', "application/json");

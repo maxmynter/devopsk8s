@@ -7,10 +7,8 @@ COPY . .
 ENV TODOS_BASEURL=http://localhost:3005
 ENV PORT=4000
 
-RUN useradd -m server-exec -s /bin/sh
+RUN mkdir -p /usr/src/app/cache && chmod -R  777 /usr/src/app/cache
 
-RUN mkdir -p /usr/src/app/cache && chown -R server-exec:server-exec /usr/src/app/cache
-
-USER server-exec
+USER root
 
 CMD ["node", "main.js"]

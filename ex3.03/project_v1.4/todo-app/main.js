@@ -6,8 +6,8 @@ const path = require('path')
 
 const hostname = '0.0.0.0';
 const port = process.env.PORT || 4000;
-const updatedTimestampFilename = 'cache/lastUpdated.txt'
-const imageFilePath = 'cache/image.jpg';
+const updatedTimestampFilename = '/usr/src/app/cache/lastUpdated.txt'
+const imageFilePath = '/usr/src/app/cache/image.jpg';
 
 
 async function recursiveEnsureDir(dir) {
@@ -22,32 +22,42 @@ async function recursiveEnsureDir(dir) {
 }
 
 async function ensureImage() {
+	console.log('Ensuring Image');
 	let now = Date.now();
 	let lastUpdated;
 
 	try {
 		const data = await fsPromises.readFile(updatedTimestampFilename, 'utf8');
 		lastUpdated = new Date(data.trim());
+		console.log("Got updated Timestamp", lastUpdated);
 		if (!lastUpdated || (now - lastUpdated.getTime() > 1000 * 3600 * 24)) {
 			await updateImageInCache();
 		}
 	} catch (err) {
+		console.log('Did not get updatedTimestamp');
 		await updateImageInCache();
 	}
 }
 
 async function updateImageInCache() {
+	console.log('Getting Image from Picsum')
 	try {
 		const response = await fetchImage('https://picsum.photos/1200');
+		console.log("Got response")
 		await recursiveEnsureDir('cache');
+		console.log('Cache exists');
+		console.log('Attempting write to ', imageFilePath);
 		const fileStream = fs.createWriteStream(imageFilePath);
 		response.pipe(fileStream);
 		await new Promise((resolve, reject) => {
 			fileStream.on('finish', resolve);
 			fileStream.on('error', reject);
 		});
+		console.log('Saved Image')
 		await fsPromises.writeFile(updatedTimestampFilename, new Date().toISOString());
+		console.log('Wrote Timestamp');
 	} catch (err) {
+		console.log('Could not update image');
 		console.log(err);
 	}
 }
@@ -118,13 +128,8 @@ const server = http.createServer(async (req, res) => {
 	}
 	else if (req.method == 'GET' && req.url.startsWith('/image')) {
 		await ensureImage();
-		const fullPath = path.join(__dirname, imageFilePath);
-		serveStaticFile(fullPath, res);
+		serveStaticFile(imageFilePath, res);
 		return;
-	}
-	else if (req.method == 'GET' && req.url == "/config") {
-		res.writeHead(200, { 'Content-Type': 'application/json' });
-		res.end(JSON.stringify({ todosBaseurl: process.env.TODOS_BASEURL || 'http://localhost:4001' }));
 	}
 	else {
 		res.statusCode = 404;

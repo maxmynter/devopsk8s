@@ -4,8 +4,7 @@ metadata:
   namespace: project
   name: persisted-claim
 spec:
-  accessModes:
-    - ReadWriteOnce
+  accessModes: [ "ReadWriteOnce" ]
   resources:
     requests:
       storage: 50Mi
