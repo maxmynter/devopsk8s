@@ -16,6 +16,8 @@ env:
 
 jobs:
   delete-deployment:
+    environment: GH-Actions
+    name: Delete Deployment for ${{ env.BRANCH }}
     runs-on: ubuntu-latest
 
     steps:
