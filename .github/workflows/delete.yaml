@@ -48,6 +48,7 @@ jobs:
     - name: Delete deployment
       run: |-
         kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
+        cd  "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/"
         kustomize edit set namespace ${GITHUB_REF#refs/heads/}
         kustomize build . | kubectl delete -f -
         kubectl delete namespace ${GITHUB_REF#refs/heads/} || true
