@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: project
+  name: todo-project-v1-4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-app
+  template:
+    metadata:
+      labels:
+        app: todo-app
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command:
+          - sh
+          - -c
+          - >
+            mkdir -p /usr/src/app/cache &&
+            chmod -R 777 /usr/src/app/cache
+      volumes:
+        - name: persisted-volume
+          persistentVolumeClaim:
+            claimName: persisted-claim
+      containers:
+        - name: todo-app
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: persisted-volume
+              mountPath: /usr/src/app/cache
+          image: TODO/FRONTEND
+        - name: todo-backend
+          image: TODO/BACKEND
+          env:
+            - name: POSTGRES_HOST
+              value: "postgres-svc"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_PASSWORD
