@@ -16,6 +16,8 @@ env:
 
 jobs:
   delete-deployment:
+    environment: GH-Actions
+    name: "Delete Deployment for ${{GITHUB_REF#refs/heads/}}"
     runs-on: ubuntu-latest
 
     steps:
