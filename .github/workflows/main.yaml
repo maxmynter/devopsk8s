@@ -2,7 +2,7 @@ name: Release Project (1.4, ex3.3)
 on:
   push
 env:
-  EXERCISE_NO: ex3.03
+  EXERCISE_NO: ex3.04
   PROJECT_REV: project_v1.4
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: dwk-cluster
@@ -68,7 +68,10 @@ jobs:
 
       - name: Deploy
         run: |-
+          kubectl create namespace ${GITHUB_REF#refs/heads/} || true
+          kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
           cd  "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/"
+          kustomize edit set namespace ${GITHUB_REF#refs/heads/}
           kustomize edit set image TODO/FRONTEND=gcr.io/$PROJECT_ID/todo/frontend:$BRANCH-$GITHUB_SHA
           kustomize edit set image TODO/BACKEND=gcr.io/$PROJECT_ID/todo/backend:$BRANCH-$GITHUB_SHA
           kustomize edit set image TODO/JOB=gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA
