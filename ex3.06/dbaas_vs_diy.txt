@@ -1,0 +1,27 @@
+DBaaS:
+Pro:
+- Easier to setup
+- Maintenance done by provider 
+- builtin backups 
+- builtin security features
+- availability ensurance by provider
+
+Con:
+- More costly
+- Less flexible
+- ecosystem lock in 
+
+
+DIY
+Pro:
+- Cheaper
+- Customizable
+- Flexible
+
+Cons:
+- More complex setup and maintenance
+- Need to roll your own backup strategy
+
+
+If you can afford the setup and have the expertise then DIY is the better choice. 
+
