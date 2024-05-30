@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+    - manifests/secret.yaml
+    - manifests/persistentvolumeclaim.yaml
+    - manifests/service.yaml
+    - manifests/deployment.yaml
+    - manifests/statefulset.yaml
+    - manifests/cronjob.yaml
+    - manifests/ingress.yaml
+    - manifests/db-backupJob.yaml
+images:
+    - name: TODO/FRONTEND
+      newName: maxmynter/devopsk8s-todo-app@sha256:188b25e2c212bc92841b48f0d3d0c9443dcc14501a6ac86b27a23e8c55453607
+    - name: TODO/BACKEND
+      newName: maxmynter/devopsk8s-project-backend@sha256:0354c5ce519a9206e96488ad59c24c0400df2e6e36663836a08a3ef993dd8dbe
+    - name: TODO/CRONJOB
+      newName: maxmynter/devopsk8s-cronjob@sha256:e788ff8680b5a8ca2ae094a0286778c7caef2b25ce573a7246fbb1717920cd7e
+    - name: TODO/DB
+      newName: maxmynter/devopsk8s-project-db@sha256:256002bc41e2c8cb2a5e887a1e2c6670768159b21fdfbfbb9850cd2090c02371
+    - name: TODO/BACKUPJOB
+      newName: maxmynter/devopsk8s-project-db@sha256:256002bc41e2c8cb2a5e887a1e2c6670768159b21fdfbfbb9850cd2090c02371
+
+

@@ -46,6 +46,7 @@ jobs:
           docker build --tag "gcr.io/$PROJECT_ID/todo/backend:$BRANCH-$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-backend/"
           docker build --tag "gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-job/"
           docker build --tag "gcr.io/$PROJECT_ID/todo/db:$BRANCH-$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-db/"
+          docker build --tag "gcr.io/$PROJECT_ID/todo/backupjob:$BRANCH-$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_REV }}/todo-backup-job/"
 
       - name: Publish
         run: |-
@@ -53,6 +54,7 @@ jobs:
           docker push "gcr.io/$PROJECT_ID/todo/backend:$BRANCH-$GITHUB_SHA"
           docker push "gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA"
           docker push "gcr.io/$PROJECT_ID/todo/db:$BRANCH-$GITHUB_SHA"
+          docker push "gcr.io/$PROJECT_ID/todo/backupjob:$BRANCH-$GITHUB_SHA"
 
       - name: Decode Secrets
         run: |-
