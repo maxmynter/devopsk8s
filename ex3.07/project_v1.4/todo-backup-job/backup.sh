@@ -39,8 +39,11 @@ echo "Uploading the backup to Google Cloud Storage..."
 echo "BUCKET_NAME: $BUCKET_NAME"
 echo "ACCESS_TOKEN: ${ACCESS_TOKEN:0:4}..."
 
-curl -v --upload-file /usr/src/app/backup.sql \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
-  "https://storage.googleapis.com/$BUCKET_NAME/db_backup_$(date +\%F).sql"
+
+echo "Request: https://storage.googleapis.com/upload/storage/v1/b/$BUCKET_NAME/o?uploadType=media&name=db_backup_$(date +\%F).sql"
+curl -X POST -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -H "Content-Type: application/octet-stream" \
+    --data-binary @/usr/src/app/backup.sql \
+    "https://storage.googleapis.com/upload/storage/v1/b/$BUCKET_NAME/o?uploadType=media&name=db_backup_$(date +\%F).sql"
 
 echo "Backup and upload completed successfully."
