@@ -19,6 +19,6 @@ images:
     - name: TODO/DB
       newName: maxmynter/devopsk8s-project-db@sha256:256002bc41e2c8cb2a5e887a1e2c6670768159b21fdfbfbb9850cd2090c02371
     - name: TODO/BACKUPJOB
-      newName: maxmynter/devopsk8s-project-backupjob@sha256:32bacf3649ec15039c61944916a77f6d1fcb50aeff25fdba0ac2860966995eed
+      newName: maxmynter/devopsk8s-project-backupjob@sha256:f25c8dc487332299a26fc30b6f534e00840c37a00bbfa67bf53158ffe5498e80
 
 
