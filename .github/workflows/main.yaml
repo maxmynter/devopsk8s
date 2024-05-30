@@ -2,7 +2,7 @@ name: Release Project (1.4, ex3.3)
 on:
   push
 env:
-  EXERCISE_NO: ex3.04
+  EXERCISE_NO: ex3.07
   PROJECT_REV: project_v1.4
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: dwk-cluster
