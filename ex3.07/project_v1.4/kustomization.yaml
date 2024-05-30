@@ -15,10 +15,10 @@ images:
     - name: TODO/BACKEND
       newName: maxmynter/devopsk8s-project-backend@sha256:0354c5ce519a9206e96488ad59c24c0400df2e6e36663836a08a3ef993dd8dbe
     - name: TODO/CRONJOB
-      newName: maxmynter/devopsk8s-project-cronjob@sha256:e788ff8680b5a8ca2ae094a0286778c7caef2b25ce573a7246fbb1717920cd7e
+      newName: maxmynter/devopsk8s-project-cronjob@sha256:5436a27ec1e487eee37963405a85e0497b4cf91c85692468faead34fe2d5a411
     - name: TODO/DB
       newName: maxmynter/devopsk8s-project-db@sha256:256002bc41e2c8cb2a5e887a1e2c6670768159b21fdfbfbb9850cd2090c02371
     - name: TODO/BACKUPJOB
-      newName: maxmynter/devopsk8s-project-db@sha256:256002bc41e2c8cb2a5e887a1e2c6670768159b21fdfbfbb9850cd2090c02371
+      newName: maxmynter/devopsk8s-project-backupjob@sha256:32bacf3649ec15039c61944916a77f6d1fcb50aeff25fdba0ac2860966995eed
 
 
