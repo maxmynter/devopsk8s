@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: DB-backup
+  name: db-backup
   namespace: project
 spec:
   schedule: "0 0 * * *"
