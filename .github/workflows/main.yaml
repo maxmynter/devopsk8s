@@ -78,5 +78,6 @@ jobs:
           kustomize edit set image TODO/BACKEND=gcr.io/$PROJECT_ID/todo/backend:$BRANCH-$GITHUB_SHA
           kustomize edit set image TODO/JOB=gcr.io/$PROJECT_ID/todo/cronjob:$BRANCH-$GITHUB_SHA
           kustomize edit set image TODO/DB=gcr.io/$PROJECT_ID/todo/db:$BRANCH-$GITHUB_SHA
+          kustomize edit set image TODO/BACKUPJOB=gcr.io/$PROJECT_ID/todo/backupjob:$BRANCH-$GITHUB_SHA
           cat kustomization.yaml
           kustomize build . | kubectl apply -f -
