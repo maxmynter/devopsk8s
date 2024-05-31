@@ -6,12 +6,12 @@ on:
     branches:
       - '*'
 env:
-  EXERCISE_NO: ex3.07
-  PROJECT_REV: project_v1.4
+  EXERCISE_NO: ex3.08
+  PROJECT_REV: project_v1.5
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
-  DEPLOYMENT_NAME: todo-project-v1-4
+  DEPLOYMENT_NAME: todo-project-v1-5
   BRANCH: ${{ github.ref_name }}
 
 jobs:
