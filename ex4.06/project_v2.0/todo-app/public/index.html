@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>DevOpsK8s App</title>
+	<style>
+		.todo-input {
+			margin-top: 20px;
+		}
+
+		.todos-list {
+			margin-top: 10px;
+			list-style-type: none;
+			padding: 0
+		}
+
+		.todos-list li {
+			padding: 8px;
+			margin-bottom: 4px;
+			background-color: #f3f3f3;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>DevOps with K8s Project</h1>
+	<img src="/image" alt="Random image from Picsum, cached in container" width="500" height="500" />
+	<h2>Todo's</h2>
+	<div class="todo-input">
+		<input type="text" id="newTodo" placeholder="Add new Todo" maxlength="140" />
+		<button onclick="addTodo()">Send</button>
+	</div>
+	<ul class="todos-list" id="todosList"></ul>
+
+	<script>
+		async function toggleTodo(event) {
+			const todoItem = event.target;
+			const todoId = todoItem.dataset.id;
+			const currentStatus = todoItem.dataset.completed === 'true';
+			const newStatus = !currentStatus;
+
+			try {
+				const response = await fetch(`/todos/${todoId}`, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({completed: newStatus}),
+				});
+
+				if (response.ok) {
+					todoItem.dataset.completed = newStatus;
+					const statusText = newStatus ? '[DONE]' : '[TODO]';
+					todoItem.textContent = statusText + todoItem.textContent.slice(6);
+				} else {
+					console.error('Failed to update todo status');
+				}
+			} catch (error) {
+				console.error('Error updating todo status:', error);
+			}
+		}
+		async function fetchTodos() {
+			try {
+				let requestUrl = '/todos';
+				console.log(`Request to ${requestUrl}`);
+				const response = await fetch(requestUrl);
+				const todos = await response.json();
+				const list = document.getElementById('todosList');
+				list.innerHTML = '';
+				todos.forEach(todo => {
+					const item = document.createElement('li');
+					const status = todo.completed ? '[DONE]' : '[TODO]';
+					item.textContent = `${status} ${todo.text}`;
+					item.dataset.id = todo.id;
+					item.dataset.cursor = 'pointer';
+					item.addEventListener('click', toggleTodo);
+					list.appendChild(item);
+				});
+			} catch (err) {
+				console.log("Failed fetching todos with error", err);
+			}
+		}
+		window.addTodo = async function () {
+			const input = document.getElementById('newTodo');
+			const todoText = input.value.trim();
+			if (todoText) {
+				const response = await fetch(`/todos`, {
+					method: 'POST',
+					headers: {"Content-Type": 'application/json'},
+					body: JSON.stringify({text: todoText})
+				});
+				if (response.ok) {
+					input.value = '';
+					fetchTodos();
+				}
+			}
+		}
+		document.addEventListener('DOMContentLoaded', async function () {
+			await fetchTodos();
+		});
+	</script>
+
+</body>
+
+</html>
