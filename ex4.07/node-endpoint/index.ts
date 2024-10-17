@@ -64,7 +64,7 @@ const server = http.createServer(async (req: http.IncomingMessage, res: http.Ser
 			let infoContent = await getMessageFromTxt(infoTxtPath)
 			console.log("got infoContent", infoContent);
 			res.writeHead(200, { "Content-Type": "text/html" });
-			res.end(`<html><body><p> Timestamp: ${timestamp}</p><p> Random String: ${hash} </p><p>Pong: ${pongcount}</p><br/><span>${infoContent}</span><br/><span> Message:${process.env.MESSAGE || 'Did not get MESSAGE'}</body></html>`);
+			res.end(`<html><body><p> Timestamp: ${timestamp}</p><p> Random String: ${hash} </p><p>Pong: ${pongcount}</p><br/><span>${infoContent}</span><br/><span> Message:${process.env.MESSAGE || 'Did not get MESSAGE!'}</body></html>`);
 		} catch (error) {
 			console.log(`Error: ${error}`)
 			res.writeHead(500, { "Content-Type": "text/plain" });
