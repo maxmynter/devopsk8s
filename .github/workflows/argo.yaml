@@ -1,0 +1,64 @@
+name: Build and publish application
+
+on:
+  push
+
+env:
+  EXERCISE_NO: ex4.07
+
+
+jobs:
+  build-publish:
+    environment: GH-Actions
+    name: Build, Push, Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # tag image with the GitHub SHA to get a unique tag
+      - name: Build and publish node-endpoint
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-node-endpoint:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/node-endpoint"
+          docker push "maxmynter/devopsk8s-node-endpoint:$GITHUB_SHA"
+
+      - name: Build and publish pingpong backend
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-pingpong:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/pingpong"
+          docker push "maxmynter/devopsk8s-pingpong:$GITHUB_SHA"
+
+      - name: Build and publish postgres
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-postgres:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/postgres"
+          docker push "maxmynter/devopsk8s-postgres:$GITHUB_SHA"
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Use node endpoint image
+        run: |
+          cd ${{ env.EXERCISE_NO }}
+          kustomize edit set image PONG/SERVER=maxmynter/devopsk8s-node-endpoint:$GITHUB_SHA
+
+      - name: Use pingpong image
+        run: |
+          cd ${{ env.EXERCISE_NO }}
+          kustomize edit set image PONG/PINGPONG=maxmynter/devopsk8s-pingpong:$GITHUB_SHA
+
+      - name: Use statefulset image
+        run: |
+          cd ${{ env.EXERCISE_NO }}
+          kustomize edit set image PONG/STATEFULSET=maxmynter/devopsk8s-postgres:$GITHUB_SHA
+
+      - name: commit kustomization.yaml to GitHub
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "${{ env.EXERCISE_NO }}/kustomization.yaml"
+          message: New version released ${{ github.sha }}
