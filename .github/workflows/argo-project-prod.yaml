@@ -1,0 +1,101 @@
+name: TODO prod, build and push
+
+on:
+  push:
+    tags:
+     - '*'
+
+
+env:
+  EXERCISE_NO: ex4.08
+  PROJECT_NAME: project_v2.0
+  ENVIRON: prod
+
+
+jobs:
+  build-publish:
+    environment: GH-Actions
+    name: Build, Push, Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # tag image with the GitHub SHA to get a unique tag
+      - name: Build and publish frontend
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-project-frontend:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/todo-app"
+          docker push "maxmynter/devopsk8s-project-frontend:$GITHUB_SHA"
+
+      - name: Build and publish backend
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-project-backend:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/todo-backend"
+          docker push "maxmynter/devopsk8s-project-backend:$GITHUB_SHA"
+
+
+      - name: Build and publish cronjob
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-project-cronjob:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/todo-job"
+          docker push "maxmynter/devopsk8s-project-backend:$GITHUB_SHA"
+
+
+      - name: Build and publish db
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-project-db:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/todo-db"
+          docker push "maxmynter/devopsk8s-project-db:$GITHUB_SHA"
+
+      - name: Build and publish db backup
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-project-backupjob:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/todo-backup-job"
+          docker push "maxmynter/devopsk8s-project-backupjob:$GITHUB_SHA"
+
+      - name: Build and publish broadcaster
+        run: |-
+          docker build --tag "maxmynter/devopsk8s-project-broadcaster:$GITHUB_SHA" "${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/todo-broadcaster"
+          docker push "maxmynter/devopsk8s-project-broadcaster:$GITHUB_SHA"
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Use frontend image
+        run: |
+          cd ${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/overlays/${{  env.ENVIRON  }}
+          kustomize edit set image TODO/FRONTEND=maxmynter/devopsk8s-project-frontend:$GITHUB_SHA
+
+      - name: Use backend image
+        run: |
+          cd ${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/overlays/${{  env.ENVIRON  }}
+          kustomize edit set image TODO/BACKEND=maxmynter/devopsk8s-project-backend:$GITHUB_SHA
+
+      - name: Use cronjob image
+        run: |
+          cd ${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/overlays/${{  env.ENVIRON  }}
+          kustomize edit set image TODO/CRONJOB=maxmynter/devopsk8s-project-cronjob:$GITHUB_SHA
+
+      - name: Use db image
+        run: |
+          cd ${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/overlays/${{  env.ENVIRON  }}
+          kustomize edit set image TODO/DB=maxmynter/devopsk8s-project-db:$GITHUB_SHA
+
+      - name: Use backupjob image
+        run: |
+          cd ${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/overlays/${{  env.ENVIRON  }}
+          kustomize edit set image TODO/BACKUPJOB=maxmynter/devopsk8s-project-backupjob:$GITHUB_SHA
+
+      - name: Use broadcaster image
+        run: |
+          cd ${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/overlays/${{  env.ENVIRON  }}
+          kustomize edit set image TODO/BROADCASTER=maxmynter/devopsk8s-project-broadcaster:$GITHUB_SHA
+
+      - name: commit kustomization.yaml to GitHub
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "${{ env.EXERCISE_NO }}/${{ env.PROJECT_NAME }}/overlays/${{ env.ENVIRON }}/kustomization.yaml"
+          message: New version released ${{ github.sha }}

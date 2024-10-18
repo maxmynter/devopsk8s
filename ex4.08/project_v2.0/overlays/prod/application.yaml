@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pingpong-production
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/maxmynter/devopsk8s
+    path: ex4.08/project_v2.0/overlays/prod
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
