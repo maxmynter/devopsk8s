@@ -9,5 +9,4 @@ resources:
     - ../../manifests/statefulset.yaml
     - ../../manifests/cronjob.yaml
     - ../../manifests/ingress.yaml
-    - ../../manifests/db-backupJob.yaml
     - ../../manifests/broadcasterDeployment.yaml

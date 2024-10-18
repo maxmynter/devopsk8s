@@ -2,7 +2,15 @@ const { connect, StringCodec } = require('nats');
 const axios = require('axios');
 const sc = StringCodec();
 
+const isProduction = process.env.ENVIRON === 'production';
+
 async function sendToDiscord(message) {
+	if (!isProduction) {
+		console.log('Staging environment: Logging message instead of sending to Discord');
+		console.log('Message:', message);
+		return;
+	}
+
 	const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 	if (!webhookUrl) {
 		console.error('Discord webhook URL not set');
@@ -29,6 +37,7 @@ async function handleSubscription(subscription, subject) {
 async function broadcaster() {
 	const nc = await connect({ servers: process.env.NATS_ENDPOINT });
 	console.log('Connected to NATS');
+	console.log(`Running in ${isProduction ? 'production' : 'staging'} environment`);
 
 	const queueGroup = 'broadcaster-group';
 	const subscriptions = [

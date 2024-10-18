@@ -20,6 +20,11 @@ spec:
         env:
           - name: NATS_ENDPOINT
             value: nats://my-nats:4222
+          - name: ENVIRON
+            valueFrom:
+              configMapKeyRef:
+                name: environment-config
+                key: ENVIRON
           - name: DISCORD_WEBHOOK_URL
             valueFrom:
               secretKeyRef:

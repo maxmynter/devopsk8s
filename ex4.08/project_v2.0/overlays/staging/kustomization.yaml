@@ -13,7 +13,11 @@ images:
       newName: maxmynter/devopsk8s-project-cronjob@sha256:5436a27ec1e487eee37963405a85e0497b4cf91c85692468faead34fe2d5a411
     - name: TODO/DB
       newName: maxmynter/devopsk8s-project-db@sha256:256002bc41e2c8cb2a5e887a1e2c6670768159b21fdfbfbb9850cd2090c02371
-    - name: TODO/BACKUPJOB
-      newName: maxmynter/devopsk8s-project-backupjob@sha256:17a49a71d2f9a3c9f12c2cc6431e9447e2ab636dd12fa6260df9515db8c5a2a8
     - name: TODO/BROADCASTER
       newName: maxmynter/devopsk8s-project-broadcaster@sha256:7265a65f51d73e198bf72b352e94555b118d2f82fb8de1d9ba8d631dda5b40b2
+
+
+configMapGenerator:
+  - name: environment-config
+    literals:
+    - ENVIRON=staging
