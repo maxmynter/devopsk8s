@@ -1,0 +1,60 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: dummysites.myapp.example.com
+spec:
+  group: myapp.example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                website_url:
+                  type: string
+  scope: Namespaced
+  names:
+    plural: dummysites
+    singular: dummysite
+    kind: DummySite
+    shortNames:
+    - ds
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dummysite-controller
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dummysite-controller
+rules:
+- apiGroups: ["myapp.example.com"]
+  resources: ["dummysites"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dummysite-controller
+subjects:
+- kind: ServiceAccount
+  name: dummysite-controller
+  namespace: default  # Adjust this if your controller is in a different namespace
+roleRef:
+  kind: ClusterRole
+  name: dummysite-controller
+  apiGroup: rbac.authorization.k8s.io
