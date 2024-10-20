@@ -14,10 +14,10 @@ resources:
 images:
 - name: PONG/PINGPONG
   newName: maxmynter/devopsk8s-pingpong
-  newTag: 29f0956acad1f292a9b49915b549754f1ed6e1e6
+  newTag: 651cf9a507642c5f62c106fb1ae34bb602efd456
 - name: PONG/SERVER
   newName: maxmynter/devopsk8s-node-endpoint
-  newTag: 29f0956acad1f292a9b49915b549754f1ed6e1e6
+  newTag: 651cf9a507642c5f62c106fb1ae34bb602efd456
 - name: PONG/STATEFULSET
   newName: maxmynter/devopsk8s-postgres
-  newTag: 29f0956acad1f292a9b49915b549754f1ed6e1e6
+  newTag: 651cf9a507642c5f62c106fb1ae34bb602efd456
