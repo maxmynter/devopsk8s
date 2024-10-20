@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: db-backup
+  namespace: project
+spec:
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            linkerd.io/inject: enabled
+        spec:
+          containers:
+          - env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_DB
+                  name: postgres-secrets
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_USER
+                  name: postgres-secrets
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: postgres-secrets
+            - name: BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: GOOGLE_STORAGE_BUCKET
+                  name: postgres-secrets
+            - name: ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: GOOGLE_STORAGE_ACCESS_KEY
+                  name: postgres-secrets
+            - name: URL
+              value: postgres-svc:5432
+            image: TODO/BACKUPJOB
+            name: db-backup
+          restartPolicy: Never
+  schedule: 0 0 * * *
+---

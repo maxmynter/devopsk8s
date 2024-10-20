@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: wiki-todo
+  namespace: project
+spec:
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            linkerd.io/inject: enabled
+        spec:
+          containers:
+          - env:
+            - name: BACKEND_URL
+              value: http://todo-backend-svc:2345
+            image: TODO/CRONJOB
+            name: wiki-todo
+          restartPolicy: OnFailure
+  schedule: 9 * * * *
+---

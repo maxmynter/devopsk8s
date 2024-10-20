@@ -1,0 +1,76 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  namespace: project
+  name: todo-project-v2-0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-app
+  template:
+    metadata:
+      labels:
+        app: todo-app
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command:
+          - sh
+          - -c
+          - >
+            mkdir -p /usr/src/app/cache &&
+            chmod -R 777 /usr/src/app/cache
+      volumes:
+        - name: persisted-volume
+          persistentVolumeClaim:
+            claimName: persisted-claim
+      containers:
+        - name: todo-app
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: persisted-volume
+              mountPath: /usr/src/app/cache
+          resources:
+            limits:
+              cpu: "50m"
+              memory: "100Mi"
+          image: TODO/FRONTEND
+        - name: todo-backend
+          image: TODO/BACKEND
+          readinessProbe:
+            initialDelaySeconds:  10
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: 4001
+          env:
+            - name: NATS_ENDPOINT
+              value: nats://my-nats:4222
+            - name: POSTGRES_HOST
+              value: "postgres-svc"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_PASSWORD
+  strategy:
+    canary:
+      steps:
+        - setWeight: 50
+        - pause: {duration: 1m} 
+        - analysis:
+            templates:
+            - templateName: cpu-usage-check
+---

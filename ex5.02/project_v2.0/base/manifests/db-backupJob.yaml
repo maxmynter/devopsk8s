@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: db-backup
+  namespace: project
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: db-backup
+              image: TODO/BACKUPJOB
+              env:
+              - name: POSTGRES_DB
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-secrets
+                    key: POSTGRES_DB
+              - name: POSTGRES_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-secrets
+                    key: POSTGRES_USER
+              - name: POSTGRES_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-secrets
+                    key: POSTGRES_PASSWORD
+              - name: BUCKET_NAME
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-secrets
+                    key: GOOGLE_STORAGE_BUCKET
+              - name: ACCESS_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-secrets
+                    key: GOOGLE_STORAGE_ACCESS_KEY
+              - name: URL
+                value: "postgres-svc:5432"
+          restartPolicy: Never

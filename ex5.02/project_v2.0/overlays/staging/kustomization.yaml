@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+namePrefix: staging-
+
+images:
+- name: TODO/BACKEND
+  newName: maxmynter/devopsk8s-project-backend
+  newTag: d2f6bf6a288ceed457e3f48b9cc2b5779c73295f
+- name: TODO/BROADCASTER
+  newName: maxmynter/devopsk8s-project-broadcaster
+  newTag: d2f6bf6a288ceed457e3f48b9cc2b5779c73295f
+- name: TODO/CRONJOB
+  newName: maxmynter/devopsk8s-project-cronjob
+  newTag: d2f6bf6a288ceed457e3f48b9cc2b5779c73295f
+- name: TODO/DB
+  newName: maxmynter/devopsk8s-project-db
+  newTag: d2f6bf6a288ceed457e3f48b9cc2b5779c73295f
+- name: TODO/FRONTEND
+  newName: maxmynter/devopsk8s-project-frontend
+  newTag: d2f6bf6a288ceed457e3f48b9cc2b5779c73295f
+
+
+configMapGenerator:
+- literals:
+  - ENVIRON=staging
+  name: environment-config

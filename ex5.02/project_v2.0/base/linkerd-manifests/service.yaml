@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-app-svc
+  namespace: project
+spec:
+  ports:
+  - name: http
+    port: 1234
+    protocol: TCP
+    targetPort: 4000
+  selector:
+    app: todo-app
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-backend-svc
+  namespace: project
+spec:
+  ports:
+  - name: http
+    port: 2345
+    protocol: TCP
+    targetPort: 4001
+  selector:
+    app: todo-app
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: postgres
+  name: postgres-svc
+  namespace: project
+spec:
+  clusterIP: None
+  ports:
+  - name: web
+    port: 5432
+  selector:
+    app: postgresapp
+---
