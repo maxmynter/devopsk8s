@@ -1,0 +1,31 @@
+10200  curl -sSL https://github.com/knative/serving/releases/download/knative-v1.16.0/serving-core.yaml \\n  | grep 'gcr.io/' | awk '{print $2}' | sort | uniq \\n  | xargs -n 1 \\n    cosign verify -o text \\n      --certificate-identity=signer@knative-releases.iam.gserviceaccount.com \\n      --certificate-oidc-issuer=https://accounts.google.com
+10201  brew install cosign
+10202  curl -sSL https://github.com/knative/serving/releases/download/knative-v1.16.0/serving-core.yaml \\n  | grep 'gcr.io/' | awk '{print $2}' | sort | uniq \\n  | xargs -n 1 \\n    cosign verify -o text \\n      --certificate-identity=signer@knative-releases.iam.gserviceaccount.com \\n      --certificate-oidc-issuer=https://accounts.google.com
+10203  which cosign
+10204  brew install cosign
+10205  pwd
+10206  ..
+10207  cd 
+10208  brew install cosign
+10209  brew doctor
+10210  brew link
+10211  brew link ipython numpy jupyterlab
+10212  brew link ipython 
+10213  j devops
+10214  curl -sSL https://github.com/knative/serving/releases/download/knative-v1.16.0/serving-core.yaml \\n  | grep 'gcr.io/' | awk '{print $2}' | sort | uniq \\n  | xargs -n 1 \\n    cosign verify -o text \\n      --certificate-identity=signer@knative-releases.iam.gserviceaccount.com \\n      --certificate-oidc-issuer=https://accounts.google.com
+10215  kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.16.0/serving-crds.yaml
+10216  kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.16.0/serving-core.yaml
+10217  kubectl apply -f https://github.com/knative/net-kourier/releases/download/knative-v1.16.0/kourier.yaml
+10218  kubectl patch configmap/config-network \\n  --namespace knative-serving \\n  --type merge \\n  --patch '{"data":{"ingress-class":"kourier.ingress.networking.knative.dev"}}'
+10219  kubectl --namespace kourier-system get service kourier
+10220  kubectl get pods -n knative-serving
+10221  kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.16.0/serving-default-domain.yaml
+10222  kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.16.0/serving-hpa.yaml
+10223  kn service create hello \\n--image ghcr.io/knative/helloworld-go:latest \\n--port 8080 \\n--env TARGET=World
+10224  knative service create hello \\n--image ghcr.io/knative/helloworld-go:latest \\n--port 8080 \\n--env TARGET=World
+10225  brew install knative/client/kn
+10226  kn service create hello \\n--image ghcr.io/knative/helloworld-go:latest \\n--port 8080 \\n--env TARGET=World
+10227  curl http://hello.default.172.21.0.3.sslip.io
+10228  kubectl get ksvc hello
+10229  curl -H "Host: hello.default.172.21.0.3.sslip.io" http://172.21.0.3
+10230  curl -H "Host: hello.default.172.21.0.3.sslip.io" http://localhost:8081
