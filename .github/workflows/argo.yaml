@@ -1,7 +1,7 @@
 name: Build and publish application
 
-on:
-  push
+#on:
+#  push
 
 env:
   EXERCISE_NO: ex4.07
