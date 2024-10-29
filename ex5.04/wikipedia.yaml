@@ -1,0 +1,53 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wikipedia-server
+  labels:
+    app: wikipedia-server
+spec:
+  containers:
+  - name: nginx
+    image: nginx:alpine
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: shared-files
+      mountPath: /usr/share/nginx/html
+  - name: wikipedia-updater
+    image: curlimages/curl:latest
+    command: ["/bin/sh", "-c"]
+    args:
+    - |
+      while true; do
+        curl -L https://en.wikipedia.org/wiki/Special:Random -o /shared-files/index.html
+        sleep 300
+      done
+    volumeMounts:
+    - name: shared-files
+      mountPath: /shared-files
+  initContainers:
+  - name: init-wikipedia
+    image: curlimages/curl:latest
+    command: ["/bin/sh", "-c"]
+    args:
+    - curl -L https://en.wikipedia.org/wiki/Kubernetes -o /shared-files/index.html
+    volumeMounts:
+    - name: shared-files
+      mountPath: /shared-files
+  volumes:
+  - name: shared-files
+    emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wikipedia-server-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: wikipedia-server
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
