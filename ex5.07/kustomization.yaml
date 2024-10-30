@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- manifests/config-map.yaml
+- manifests/endpoint.yaml
+- manifests/knative-service.yaml
+- postgres/manifests/postgres-service.yaml
+- postgres/manifests/statefulset.yaml
+
+
+
+
+images:
+- name: PONG/PINGPONG
+  newName: maxmynter/devopsk8s-pingpong@sha256:77a30440aeb493ffe7c95b777ef1030e4fd5c7740bdf1adde924e7f12b56e326
+- name: PONG/SERVER
+  newName: maxmynter/devopsk8s-node-endpoint@sha256:da1be8085ede5678c2e914a56bc1c5c3337b23762405cf3c15498e874d5d6b1f
+- name: PONG/STATEFULSET
+  newName: maxmynter/devopsk8s-postgres
+  newTag: f3a7a15147c99015fa1a21a8067d105483e3da2b
